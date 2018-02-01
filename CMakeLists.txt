@@ -1,6 +1,15 @@
 cmake_minimum_required (VERSION 2.8)
 project (SHARPSAT) 
 
+#Dynamic/Shared Libs
+
+
+
+IF(STATIC)
+#Set Linker flags
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+ENDIF(STATIC)
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -Wall")
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11 -O3 -DNDEBUG -Wall")
@@ -26,4 +35,12 @@ find_library(GMPXX_LIB gmpxx)
 add_subdirectory(src)
 
 add_executable (sharpSAT src/main.cpp)
+
+IF(STATIC)
+#Static start
+set_target_properties(sharpSAT PROPERTIES LINK_SEARCH_START_STATIC 1)
+set_target_properties(sharpSAT PROPERTIES LINK_SEARCH_END_STATIC 1)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+#Static Libs
+ENDIF(STATIC)
 target_link_libraries (sharpSAT libsharpSAT ${GMP_LIB} ${GMPXX_LIB}) 
